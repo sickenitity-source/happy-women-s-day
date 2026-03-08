@@ -7,66 +7,109 @@
 <style>
 
 body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-family: "Segoe UI", sans-serif;
-
-    background: linear-gradient(135deg,#ffffff,#1f4e79,#b76e79);
-    background-size: 400% 400%;
-    animation: gradientMove 10s ease infinite;
-}
-
-@keyframes gradientMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Segoe UI, sans-serif;
+background:linear-gradient(135deg,#ffffff,#1f4e79,#b76e79);
+overflow:hidden;
+color:#333;
 }
 
 .container{
-    background:white;
-    padding:40px;
-    border-radius:20px;
-    text-align:center;
-    width:420px;
-    box-shadow:0 15px 40px rgba(0,0,0,0.25);
+background:white;
+padding:40px;
+border-radius:20px;
+text-align:center;
+width:420px;
+box-shadow:0 15px 40px rgba(0,0,0,0.25);
+z-index:2;
 }
 
 h1{
-    color:#1f4e79;
+color:#1f4e79;
 }
 
 .lever-box{
-    position:relative;
-    width:60px;
-    height:200px;
-    margin:30px auto;
-    background:#eee;
-    border-radius:30px;
+position:relative;
+width:60px;
+height:200px;
+margin:25px auto;
+background:#eee;
+border-radius:30px;
 }
 
 .lever{
-    position:absolute;
-    width:60px;
-    height:60px;
-    background:#b76e79;
-    border-radius:50%;
-    cursor:grab;
-    top:0;
-}
-
-#label{
-    font-size:14px;
-    color:#555;
+position:absolute;
+width:60px;
+height:60px;
+background:#b76e79;
+border-radius:50%;
+cursor:grab;
+top:0;
 }
 
 #message{
-    margin-top:20px;
-    font-size:20px;
-    display:none;
-    color:#1f4e79;
+display:none;
+font-size:20px;
+margin-top:15px;
+color:#1f4e79;
+}
+
+#strengthMsg{
+display:none;
+margin-top:10px;
+font-weight:bold;
+color:#b76e79;
+}
+
+.meter{
+width:100%;
+background:#eee;
+border-radius:20px;
+overflow:hidden;
+margin-top:15px;
+display:none;
+}
+
+.meter-fill{
+height:20px;
+width:0%;
+background:#b76e79;
+transition:width 1.5s;
+}
+
+.rose{
+font-size:40px;
+margin-top:15px;
+transform:scale(0);
+transition:transform 1s;
+}
+
+.heart{
+position:absolute;
+color:#ff4d6d;
+font-size:18px;
+animation:floatUp 6s linear infinite;
+}
+
+@keyframes floatUp{
+from{transform:translateY(100vh);}
+to{transform:translateY(-10vh);}
+}
+
+.petal{
+position:absolute;
+color:#b76e79;
+font-size:18px;
+animation:fall 5s linear infinite;
+}
+
+@keyframes fall{
+from{transform:translateY(-10vh) rotate(0deg);}
+to{transform:translateY(100vh) rotate(360deg);}
 }
 
 </style>
@@ -77,46 +120,112 @@ h1{
 <div class="container">
 
 <h1>Pull the Lever</h1>
-<p id="label">Pull me down</p>
+<p>Pull me down</p>
 
 <div class="lever-box">
 <div class="lever" id="lever"></div>
 </div>
+
+<div class="meter">
+<div class="meter-fill" id="meterFill"></div>
+</div>
+
+<div class="rose" id="rose">🌹</div>
 
 <p id="message">
 Happy Women's Day my strongest woman Pratiksha.<br>
 You really mean a lot to me.
 </p>
 
+<p id="strengthMsg">
+See, that's why you're the strongest woman.
+</p>
+
 </div>
 
 <script>
 
-let lever = document.getElementById("lever");
-let box = document.querySelector(".lever-box");
-let message = document.getElementById("message");
+let lever=document.getElementById("lever");
+let box=document.querySelector(".lever-box");
+let message=document.getElementById("message");
+let meter=document.querySelector(".meter");
+let meterFill=document.getElementById("meterFill");
+let rose=document.getElementById("rose");
+let strengthMsg=document.getElementById("strengthMsg");
 
-let dragging = false;
+let dragging=false;
 
-lever.onmousedown = () => dragging = true;
-document.onmouseup = () => dragging = false;
+lever.onmousedown=()=>dragging=true;
+document.onmouseup=()=>dragging=false;
 
-document.onmousemove = (e) => {
+document.onmousemove=(e)=>{
 
 if(!dragging) return;
 
-let rect = box.getBoundingClientRect();
-let offset = e.clientY - rect.top - 30;
+let rect=box.getBoundingClientRect();
+let offset=e.clientY-rect.top-30;
 
-if(offset < 0) offset = 0;
-if(offset > 140){
-offset = 140;
-message.style.display = "block";
+if(offset<0) offset=0;
+
+if(offset>140){
+
+offset=140;
+
+message.style.display="block";
+
+meter.style.display="block";
+
+setTimeout(()=>{
+meterFill.style.width="100%";
+},200);
+
+rose.style.transform="scale(1)";
+
+setTimeout(()=>{
+strengthMsg.style.display="block";
+},1700);
+
+createPetals();
 }
 
-lever.style.top = offset + "px";
-
+lever.style.top=offset+"px";
 };
+
+function createPetals(){
+
+for(let i=0;i<20;i++){
+
+let petal=document.createElement("div");
+petal.className="petal";
+petal.innerHTML="🌸";
+
+petal.style.left=Math.random()*100+"vw";
+petal.style.animationDuration=(3+Math.random()*4)+"s";
+
+document.body.appendChild(petal);
+
+}
+
+}
+
+function createHearts(){
+
+for(let i=0;i<15;i++){
+
+let heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="♥";
+
+heart.style.left=Math.random()*100+"vw";
+heart.style.animationDuration=(4+Math.random()*4)+"s";
+
+document.body.appendChild(heart);
+
+}
+
+}
+
+createHearts();
 
 </script>
 
